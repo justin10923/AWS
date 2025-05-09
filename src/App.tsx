@@ -1,33 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
+const client = new SQSClient({});
+const SQS_QUEUE_URL = "queue_url";
+
+const sqsClient = async (sqsQueueUrl = SQS_QUEUE_URL) => {
+  const command = new SendMessageCommand({
+    QueueUrl: sqsQueueUrl,
+    DelaySeconds: 10,
+    MessageAttributes: {
+      Title: {
+        DataType: "String",
+        StringValue: "The Whistler",
+      },
+      Author: {
+        DataType: "String",
+        StringValue: "John Grisham",
+      },
+      WeeksOn: {
+        DataType: "Number",
+        StringValue: "6",
+      },
+    },
+    MessageBody:
+      "Information about current NY Times fiction bestseller for week of 12/11/2016.",
+  });
+
+  const response = await client.send(command);
+  console.log(response);
+  return response;
+};
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>This is my App</h1>
       </div>
-      <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <button onClick={() => sqsClient()}>
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
