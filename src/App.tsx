@@ -2,7 +2,7 @@ import './App.css'
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
 const client = new SQSClient({});
-const SQS_QUEUE_URL = "queue_url";
+const SQS_QUEUE_URL = "https://sqs.us-west-2.amazonaws.com/183784237713/TestQueue1";
 
 const sqsClient = async (sqsQueueUrl = SQS_QUEUE_URL) => {
   const command = new SendMessageCommand({
